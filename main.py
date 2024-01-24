@@ -54,7 +54,7 @@ class Ball:
         self.x = self.original_x = x
         self.y = self.original_y = y
         self.radius = radius
-        self.x_vel = self.BALL_VEL
+        self.x_vel = self.original_x_vel = self.BALL_VEL
         self.y_vel = 0
         
     def draw(self, win):
@@ -104,7 +104,10 @@ def handle_collision(ball, left_paddle, right_paddle):
     if ball.x_vel < 0:  # left paddle
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
-                ball.x_vel *= -1.05
+                if abs(ball.x_vel) <= (ball.original_x_vel * 3):
+                    ball.x_vel *= -1.05
+                else:
+                    ball.x_vel *= -1
                 
                 middle_y = left_paddle.y + left_paddle.height / 2
                 difference_in_y = middle_y - ball.y
@@ -115,7 +118,10 @@ def handle_collision(ball, left_paddle, right_paddle):
     else:               # right paddle
         if ball.y >= right_paddle.y and ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
-                ball.x_vel *= -1.05
+                if abs(ball.x_vel) <= (ball.original_x_vel * 3):
+                    ball.x_vel *= -1.05
+                else:
+                    ball.x_vel *= -1
                 
                 middle_y = right_paddle.y + right_paddle.height / 2
                 difference_in_y = middle_y - ball.y
