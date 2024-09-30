@@ -5,7 +5,7 @@ WIDTH, HEIGHT = 700, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Ping Pong")
 
-FPS = 60
+FPS = 120
 
 WHITE = "#FFFFFF"
 BLACK = "#000000"
@@ -25,7 +25,7 @@ WINNING_SCORE = 10
 
 class Paddle:
     COLOR = GREEN
-    VEL = 4
+    VEL = 2
     
     def __init__(self, x, y, width, height):
         self.x = self.original_x = x
@@ -38,9 +38,9 @@ class Paddle:
         
     def move(self, up=True):
         if up:
-            self.y -= self.VEL
+            self.y -= self.VEL * (120/FPS)
         else:
-            self.y += self.VEL
+            self.y += self.VEL * (120/FPS)
             
     def reset(self):
         self.x = self.original_x
@@ -48,7 +48,7 @@ class Paddle:
 
 class Ball:
     COLOR = WHITE
-    BALL_VEL = 5
+    BALL_VEL = 2
     
     def __init__(self, x, y, radius):
         self.x = self.original_x = x
@@ -61,8 +61,8 @@ class Ball:
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
         
     def move(self):
-        self.x += self.x_vel
-        self.y += self.y_vel
+        self.x += self.x_vel * (120/FPS)
+        self.y += self.y_vel * (120/FPS)
         
     def reset(self):
         self.x = self.original_x
@@ -96,6 +96,8 @@ def draw(win, paddles, ball, left_score, right_score):
     pygame.display.update()
     
 def handle_collision(ball, left_paddle, right_paddle):
+    VEL_CAP = (ball.original_x_vel * 3)
+    
     if ball.y + ball.radius >= HEIGHT:  # ceiling
         ball.y_vel *= -1
     elif ball.y - ball.radius <= 0:     # bottom
@@ -104,7 +106,7 @@ def handle_collision(ball, left_paddle, right_paddle):
     if ball.x_vel < 0:  # left paddle
         if ball.y >= left_paddle.y and ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
-                if abs(ball.x_vel) <= (ball.original_x_vel * 3):
+                if abs(ball.x_vel) <= VEL_CAP:
                     ball.x_vel *= -1.05
                 else:
                     ball.x_vel *= -1
@@ -118,7 +120,7 @@ def handle_collision(ball, left_paddle, right_paddle):
     else:               # right paddle
         if ball.y >= right_paddle.y and ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
-                if abs(ball.x_vel) <= (ball.original_x_vel * 3):
+                if abs(ball.x_vel) <= VEL_CAP:
                     ball.x_vel *= -1.05
                 else:
                     ball.x_vel *= -1
